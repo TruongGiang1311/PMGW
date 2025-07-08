@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Eye, EyeOff, User, Mail, Phone, Lock, CreditCard, Building } from 'lucide-react';
+import TermsModal from '../../../component/ui/TermsModal';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -21,6 +22,8 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [modalType, setModalType] = useState<'terms' | 'privacy'>('terms');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -35,6 +38,15 @@ export default function RegisterPage() {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
+  };
+
+  const openTermsModal = (type: 'terms' | 'privacy') => {
+    setModalType(type);
+    setShowTermsModal(true);
+  };
+
+  const closeTermsModal = () => {
+    setShowTermsModal(false);
   };
 
   const validateForm = () => {
@@ -343,13 +355,21 @@ export default function RegisterPage() {
               />
               <label htmlFor="agreeTerms" className="ml-2 block text-sm text-gray-700">
                 Tôi đồng ý với{' '}
-                <Link href="/terms" className="text-blue-600 hover:text-blue-500">
+                <button
+                  type="button"
+                  onClick={() => openTermsModal('terms')}
+                  className="text-blue-600 hover:text-blue-500 underline"
+                >
                   điều khoản sử dụng
-                </Link>{' '}
+                </button>{' '}
                 và{' '}
-                <Link href="/privacy" className="text-blue-600 hover:text-blue-500">
+                <button
+                  type="button"
+                  onClick={() => openTermsModal('privacy')}
+                  className="text-blue-600 hover:text-blue-500 underline"
+                >
                   chính sách bảo mật
-                </Link>
+                </button>
               </label>
             </div>
             {errors.agreeTerms && <p className="mt-1 text-sm text-red-600">{errors.agreeTerms}</p>}
@@ -375,6 +395,13 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
+
+      {/* Terms Modal */}
+      <TermsModal
+        isOpen={showTermsModal}
+        onClose={closeTermsModal}
+        type={modalType}
+      />
     </div>
   );
 } 
